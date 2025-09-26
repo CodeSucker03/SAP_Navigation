@@ -3,7 +3,6 @@ import BaseController from "../BaseController";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import Event from "sap/ui/base/Event";
-import { EmployeeRouteArgs } from "./interfaces";
 import { IconTabBar$SelectEvent } from "sap/m/IconTabBar";
 
 export default class Resume extends BaseController {
@@ -22,8 +21,8 @@ export default class Resume extends BaseController {
   }
   public _onRouteMatched(oEvent: Route$MatchedEvent): void {
     let _aValidTabKeys: string[] = ["Info", "Projects", "Hobbies", "Notes"];
-
-    let oArgs = oEvent.getParameter("arguments") as EmployeeRouteArgs;
+  
+    let oArgs = oEvent.getParameter("arguments") as RouteArgs;
     let oView = this.getView();
     // bind the view to the object path, which is /Employees(<id>)
     oView?.bindElement({

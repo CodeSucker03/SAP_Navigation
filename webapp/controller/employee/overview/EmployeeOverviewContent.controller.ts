@@ -19,7 +19,7 @@ export default class EmployeeOverviewContent extends BaseController {
   _bSortDescending: boolean;
   _aValidSortFields: string[];
   _sSearchQuery: undefined | string;
-  _oRouterArgs: { "?query"?: { search?: string } } | undefined;
+  _oRouterArgs: { "?query"?: QueryParams } | undefined; // import interface
 
   public onInit(): void {
     let oRouter = this.getRouter();
@@ -47,22 +47,29 @@ export default class EmployeeOverviewContent extends BaseController {
   public _onRouteMatched(oEvent: Route$MatchedEvent): void {
     // save the current query state
     this._oRouterArgs = oEvent.getParameter("arguments");
-	if (!this._oRouterArgs) {
-		this._oRouterArgs = {};
-	}
+    if (!this._oRouterArgs) {
+      this._oRouterArgs = {};
+    }
     this._oRouterArgs["?query"] = this._oRouterArgs["?query"] || {};
 
+    let oQueryParameter = this._oRouterArgs["?query"];
+
     // search/filter via URL hash
-    this._applySearchFilter(this._oRouterArgs["?query"].search);
+    this._applySearchFilter(oQueryParameter.search);
+    // sorting via URL hash
+    this._applySorter(
+      oQueryParameter.sortField,
+      oQueryParameter.sortDescending
+    );
   }
 
   public onSearchEmployeesTable(oEvent: SearchField$SearchEvent): void {
     this._applySearchFilter(oEvent.getSource().getValue()); /// return string
     // update the hash with the current search term
     let oRouter = this.getRouter();
-	if (!this._oRouterArgs) {
-		this._oRouterArgs = {};
-	}
+    if (!this._oRouterArgs) {
+      this._oRouterArgs = {};
+    }
     if (!this._oRouterArgs["?query"]) {
       this._oRouterArgs["?query"] = {};
     }
@@ -71,13 +78,19 @@ export default class EmployeeOverviewContent extends BaseController {
   }
 
   private _initViewSettingsDialog() {
+    let oRouter = this.getRouter();
     this._oVSD = new ViewSettingsDialog("vsd", {
       confirm: (oEvent: ViewSettingsDialog$ConfirmEvent) => {
         let oSortItem = oEvent.getParameter("sortItem");
-        this._applySorter(
-          oSortItem?.getKey(),
-          oEvent.getParameter("sortDescending")
-        );
+        if (this._oRouterArgs && this._oRouterArgs["?query"]) {
+          this._oRouterArgs["?query"].sortField = oSortItem?.getKey();
+          this._oRouterArgs["?query"].sortDescending = oEvent.getParameter("sortDescending");
+          oRouter.navTo(
+            "employeeOverview",
+            this._oRouterArgs,
+            true /*without history*/
+          );
+        }
       },
     });
 
