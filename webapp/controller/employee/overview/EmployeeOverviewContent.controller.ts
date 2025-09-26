@@ -2,6 +2,7 @@ import Event from "sap/ui/base/Event";
 import BaseController from "../../BaseController";
 import SearchField, { SearchField$SearchEvent } from "sap/m/SearchField";
 import ViewSettingsDialog, {
+  ViewSettingsDialog$CancelEvent,
   ViewSettingsDialog$ConfirmEvent,
 } from "sap/m/ViewSettingsDialog";
 import ViewSettingsItem from "sap/m/ViewSettingsItem";
@@ -12,6 +13,10 @@ import Table from "sap/m/Table";
 import ListBinding from "sap/ui/model/ListBinding";
 import Router from "sap/ui/core/routing/Router";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
+import ColumnListItem from "sap/m/ColumnListItem";
+import { List$ItemClickEvent } from "sap/ui/webc/main/List";
+import { Table$RowPressEvent } from "sap/ui/mdc/Table";
+import { ListBase$ItemPressEvent } from "sap/m/ListBase";
 export default class EmployeeOverviewContent extends BaseController {
   _oTable: Table | null;
   _oVSD: ViewSettingsDialog | null;
@@ -41,7 +46,15 @@ export default class EmployeeOverviewContent extends BaseController {
     return super.getRouter();
   }
   public onSortButtonPressed(): void {
-    this._oVSD?.open();
+    let oRouter = this.getRouter();
+    if (!this._oRouterArgs) {
+      this._oRouterArgs = {};
+    }
+    if (!this._oRouterArgs["?query"]) {
+      this._oRouterArgs["?query"] = {};
+    }
+    this._oRouterArgs["?query"].showDialog = true;
+    oRouter.navTo("employeeOverview", this._oRouterArgs);
   }
 
   public _onRouteMatched(oEvent: Route$MatchedEvent): void {
@@ -61,6 +74,11 @@ export default class EmployeeOverviewContent extends BaseController {
       oQueryParameter.sortField,
       oQueryParameter.sortDescending
     );
+
+    // show dialog via URL hash
+    if (oQueryParameter.showDialog) {
+      this._oVSD?.open();
+    }
   }
 
   public onSearchEmployeesTable(oEvent: SearchField$SearchEvent): void {
@@ -84,7 +102,19 @@ export default class EmployeeOverviewContent extends BaseController {
         let oSortItem = oEvent.getParameter("sortItem");
         if (this._oRouterArgs && this._oRouterArgs["?query"]) {
           this._oRouterArgs["?query"].sortField = oSortItem?.getKey();
-          this._oRouterArgs["?query"].sortDescending = oEvent.getParameter("sortDescending");
+          this._oRouterArgs["?query"].sortDescending =
+            oEvent.getParameter("sortDescending");
+          delete this._oRouterArgs["?query"].showDialog;
+          oRouter.navTo(
+            "employeeOverview",
+            this._oRouterArgs,
+            true /*without history*/
+          );
+        }
+      },
+      cancel: (oEvent: ViewSettingsDialog$CancelEvent) => {
+        if (this._oRouterArgs && this._oRouterArgs["?query"]) {
+          delete this._oRouterArgs["?query"].showDialog;
           oRouter.navTo(
             "employeeOverview",
             this._oRouterArgs,
@@ -198,5 +228,16 @@ export default class EmployeeOverviewContent extends BaseController {
   ): void {
     this._oVSD?.setSelectedSortItem(sSortField);
     this._oVSD?.setSortDescending(bSortDescending);
+  }
+  public onItemPressed(oEvent: ListBase$ItemPressEvent): void {
+    let oItem = oEvent.getParameter("listItem") as ColumnListItem;
+    let oCtx = oItem.getBindingContext();
+	console.log(oCtx);
+    this.getRouter().navTo("employeeResume", {
+      employeeId: oCtx?.getProperty("EmployeeID"),
+      "?query": {
+        tab: "Info",
+      },
+    });
   }
 }

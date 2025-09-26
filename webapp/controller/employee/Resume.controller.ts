@@ -21,8 +21,8 @@ export default class Resume extends BaseController {
   }
   public _onRouteMatched(oEvent: Route$MatchedEvent): void {
     let _aValidTabKeys: string[] = ["Info", "Projects", "Hobbies", "Notes"];
-  
-    let oArgs = oEvent.getParameter("arguments") as RouteArgs;
+
+    let oArgs = oEvent.getParameter("arguments") as RouteArgs; // import interface
     let oView = this.getView();
     // bind the view to the object path, which is /Employees(<id>)
     oView?.bindElement({
@@ -44,7 +44,8 @@ export default class Resume extends BaseController {
       // support lazy loading for the hobbies and notes tab
       if (oQuery.tab === "Hobbies" || oQuery.tab === "Notes") {
         // the target is either "resumeTabHobbies" or "resumeTabNotes"
-        this.getRouter()?.getTargets()
+        this.getRouter()
+          ?.getTargets()
           ?.display("resumeTab" + oQuery.tab);
       }
     } else {
@@ -63,6 +64,8 @@ export default class Resume extends BaseController {
   }
   private _onBindingChange(): void {
     // No data for the binding
+    console.log(this?.getView()?.getBindingContext());
+
     if (!this?.getView()?.getBindingContext()) {
       this?.getRouter()?.getTargets()?.display("notFound");
     }

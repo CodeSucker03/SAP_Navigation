@@ -9,4 +9,5 @@ type QueryParams = {
   search?: string;
   sortField?: string;
   sortDescending?: boolean;
+  showDialog?: boolean;
 };
