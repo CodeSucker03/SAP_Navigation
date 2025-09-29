@@ -1,4 +1,3 @@
-import Event from "sap/ui/base/Event";
 import BaseController from "../../BaseController";
 import SearchField, { SearchField$SearchEvent } from "sap/m/SearchField";
 import ViewSettingsDialog, {
@@ -14,17 +13,15 @@ import ListBinding from "sap/ui/model/ListBinding";
 import Router from "sap/ui/core/routing/Router";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
 import ColumnListItem from "sap/m/ColumnListItem";
-import { List$ItemClickEvent } from "sap/ui/webc/main/List";
-import { Table$RowPressEvent } from "sap/ui/mdc/Table";
 import { ListBase$ItemPressEvent } from "sap/m/ListBase";
 export default class EmployeeOverviewContent extends BaseController {
-  _oTable: Table | null;
-  _oVSD: ViewSettingsDialog | null;
-  _sSortField: string | null;
-  _bSortDescending: boolean;
-  _aValidSortFields: string[];
-  _sSearchQuery: undefined | string;
-  _oRouterArgs: { "?query"?: QueryParams } | undefined; // import interface
+  private _oTable: Table | null;
+  private _oVSD: ViewSettingsDialog | null;
+  private _sSortField: string | null;
+  private _bSortDescending: boolean;
+  private _aValidSortFields: string[];
+  private _sSearchQuery: undefined | string;
+  private _oRouterArgs: { "?query"?: QueryParams } | undefined; // import interface
 
   public onInit(): void {
     let oRouter = this.getRouter();

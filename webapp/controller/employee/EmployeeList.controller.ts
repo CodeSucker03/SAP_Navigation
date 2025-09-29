@@ -2,6 +2,7 @@ import Router from "sap/ui/core/routing/Router";
 import BaseController from "../BaseController";
 import Event from "sap/ui/base/Event";
 import StandardListItem from "sap/m/StandardListItem";
+import { ListItemBase$PressEvent } from "sap/m/ListItemBase";
 
 export default class EmployeeList extends BaseController {
   public onInit(): void {}
@@ -11,7 +12,7 @@ export default class EmployeeList extends BaseController {
   public onNavBack(): void {
     super.onNavBack();
   }
-  public onListItemPressed(oEvent: Event): void {
+  public onListItemPressed(oEvent: ListItemBase$PressEvent): void {
     let oItem = oEvent.getSource() as StandardListItem;
     let oCtx = oItem.getBindingContext();
     console.log(oCtx);

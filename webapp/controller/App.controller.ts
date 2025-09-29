@@ -1,11 +1,9 @@
-import Controller from "sap/ui/core/mvc/Controller";
 import BaseController from "./BaseController";
 import Log from "sap/base/Log";
 import Router, {
   Router$BypassedEvent,
   Router$RouteMatchedEvent,
 } from "sap/ui/core/routing/Router";
-import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
 
 export default class App extends BaseController {
   public getRouter(): Router {

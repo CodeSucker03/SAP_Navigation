@@ -1,13 +1,13 @@
 import Router from "sap/ui/core/routing/Router";
 import BaseController from "./BaseController";
-import Target from "sap/ui/core/routing/Target";
 import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 
 export default class NotFound extends BaseController {
+  private _oData : { "fromTarget"?: string } | undefined; // store custom target data
+
   public getRouter(): Router {
     return super.getRouter();
   }
-  private _oData?: any; // store custom target data
 
   public onInit(): void {
     const oRouter: Router = this.getRouter();
